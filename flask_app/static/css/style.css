@@ -1,0 +1,52 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+html{
+    background-image: url('img/pexels-olia-danilevich-4974914.jpg');
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+}
+body{
+    background: none !important;
+    width: 100% !important;
+}
+
+.link:hover{
+    color: gold;
+    transition: .3s;
+}
+.container-fluid{
+    background-color: white;
+}
+.nav-link{
+    transition: transform .4s !important;
+}
+.nav-link:hover{
+    transform: scale(1.2);
+}
+
+.main{
+    margin-top: 20%;
+    color: white;
+}
+.view{
+    transition: transform .4s !important;
+    margin-left: 1em;
+}
+.view:hover{
+    color: black !important;
+    transform: scale(1.2);
+}
+.signBtn{
+    transition: transform .4s !important;
+}
+.signBtn:hover{
+    transform: scale(1.2);
+}
+

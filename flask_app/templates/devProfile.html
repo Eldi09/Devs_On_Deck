@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/dashStyle.css')}}">
+    <link href="{{url_for('static', filename='css/img')}}">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+</head>
+<body id="body-pd" style="background-color: #EEEEEE;">
+    <header class="header" id="header">
+        <div class="header_toggle"> <i class='bx bx-menu' id="header-toggle"></i> </div>
+        <h3 class="d-flex align-items-around">Welcome to Proflie <i class="bi bi-person"></i></h3>
+            {% if not loggedUser.profile_pic: %}
+                <h3><a href="/dev_profile"><i class="bi bi-person-circle ml-5"></i></a></h3>
+            {% else %}
+                <a href="/dev_profile">
+                    <img src="/static/css/img/{{loggedUser.profile_pic}}" alt="" class="userProfile">
+                </a>
+            {% endif %}
+    </header>
+    <div class="l-navbar" id="nav-bar">
+        <nav class="nav">
+            <div> 
+                <a href="#" class="nav_logo"> <i class="bi bi-braces-asterisk nav_logo-icon"></i> <span class="nav_logo-name">DevOnDeck</span> </a>
+                <div class="nav_list"> <a href="/dashboard" class="nav_link"> <i class='bx bx-grid-alt nav_icon'></i> <span class="nav_name">Dashboard</span> </a> 
+                    <a href="/dev_profile" class="nav_link active"> <i class='bx bx-user nav_icon'></i> <span class="nav_name">Profile</span> </a> 
+                    <a href="#" class="nav_link"> <i class="bi bi-code-slash"></i> <span class="nav_name">Org Sign Up</span> </a> 
+                    <div id="dropdown">
+                        <a href="#" class="nav_link"> <i class="bi bi-chat-square-text"></i> <span class="nav_name">Messages</span> </a>
+                        <div class="dropdown-content">
+                            {% for communication in all_communications %}
+                                {% for org in organizations %}
+                                    {% if communication.organization_id == org.id %}
+                                        <a href="/show_messages/{{org.id}}" class="text-dark">
+                                            <img src="/static/css/img/{{org.profile_pic}}" class="OrgProfile">{{org.org_name}}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            <!-- <a href="#" class="nav_link"> <i class='bx bx-bookmark nav_icon'></i> <span class="nav_name">Bookmark</span> </a>
+                            <a href="#" class="nav_link"> <i class='bx bx-folder nav_icon'></i> <span class="nav_name">Files</span> </a> 
+                            <a href="#" class="nav_link"> <i class='bx bx-bar-chart-alt-2 nav_icon'></i> <span class="nav_name">Stats</span> </a> -->
+                        </div>
+                    </div>
+                </div>
+            </div> <a href="/log_out" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">SignOut</span> </a>
+        </nav>
+    </div>
+
+    <div class="d-flex justify-content-between flex-column" style="position: relative; top: 80px">
+        <div class="d-flex justify-content-between col-12">
+            <div class="d-flex justify-content-between text-bg-light p-3 col-12">
+                <div class="d-flex flex-column col-12">
+                    <div class="m-auto d-flex flex-column justify-content-between align-items-center">
+                        {% if loggedUser.profile_pic == None %}
+                            <img src="/static/css/img/PROFILE.png" alt="" class="profilePic">
+                        {% endif %}
+                        {% if loggedUser.profile_pic != None %}
+                            <img class="profilePic" src="/static/css/img/{{loggedUser.profile_pic}}" alt="profile picture">
+                        {% endif %}
+                        <label class="p-info">{{loggedUser.first_name}} {{loggedUser.last_name}}</label>
+                        <div class="d-flex">
+                            <a href="#"><i class="bi bi-linkedin m-2 text-primary"></i></a>
+                            <a href="#"><i class="bi bi-github m-2 text-dark"></i></a>
+                            <a href="#"><i class="bi bi-instagram m-2 text-danger"></i></a>
+                        </div>
+                    </div>
+                    {% with messages = get_flashed_messages(with_categories, category_filter='profile_pic') %}
+                            {% if messages %}
+                                {% for msg in messages %}
+                                    <small class="text-danger">{{ msg }}</small>
+                                {% endfor %}
+                            {% endif %}
+                    {% endwith %}
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-primary m-2" onclick="updateInfo()">Personal Information <i class="bi bi-person"></i></button>
+                        <button class="btn btn-primary m-2" onclick="skillSection()">Update Skills <i class="bi bi-code-slash"></i></button>
+                        <!-- <label class="p-info">First name: <span>{{loggedUser.first_name}} {{loggedUser.last_name}}</span></label>
+                        <label class="mt-2 p-info">Last name: <span>{{loggedUser.last_name}}</span></label>
+                        <label class="mt-2 p-info">Email: <span>{{loggedUser.email}}</span></label>
+                        <label class="mt-2 p-info">Address: <span>{{loggedUser.address}}</span></label>
+                        <label class="mt-2 p-info">City: <span>{{loggedUser.city}}</span></label>
+                        <label class="mt-2 p-info">State: <span>{{loggedUser.state}}</span></label> -->
+                    </div>
+                    <!-- <label class="mt-2 p-info">Created at: <span>{{loggedUser.created_at}}</span></label>
+                    <label class="mt-2 p-info">Updated at: <span>{{loggedUser.updated_at}}</span></label> -->
+                    <div class="d-flex skills">
+                        <div id="devSkills" class="col-6 p-2">
+                            <h5 class="text-dark">Your Programing Language Skills:</h5>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-success w_{{progress_of}}" id="skillProgress" role="progressbar"  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{progress_of}}%</div>
+                            </div>
+                            <div class="d-flex">
+                                {% for skill in dev_skills: %}
+                                <div class="d-flex flex-column justify-content-between align-items-center m-2">
+                                    <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                                    <a href="#" class="m-2 devSkills">{{skill.skill}}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% with messages = get_flashed_messages(with_categories, category_filter='skillError') %}
+                                {% if messages %}
+                                    {% for msg in messages %}
+                                    <small class="text-danger">{{ msg }}</small>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                            {% with messages = get_flashed_messages(with_categories, category_filter=['skillExist']) %}
+                                {% for msg in messages %}
+                                    <small class="text-danger">{{ msg }}</small>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+
+                        <div id="devSkills" class="col-6 p-2">
+                            <h5 class="text-dark">Your Framework Skills:</h5>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-success w_{{frame_progress}}" id="skillProgress" role="progressbar"  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{frame_progress}}%</div>
+                            </div>
+                            <div class="d-flex">
+                                {% for frame in dev_frameworks: %}
+                                <div class="d-flex flex-column justify-content-between align-items-center m-2">
+                                    <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                                    <a href="#" class="m-2 devSkills">{{frame.framework}}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% with messages = get_flashed_messages(with_categories, category_filter='frameError') %}
+                                {% if messages %}
+                                    {% for msg in messages %}
+                                    <small class="text-danger">{{ msg }}</small>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                            {% with messages = get_flashed_messages(with_categories, category_filter=['frameExist']) %}
+                                {% for msg in messages %}
+                                    <small class="text-danger">{{ msg }}</small>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-bg-light p-3 mt-2 d-none" id="skillSection">
+            <h5 class="">Add New Skills</h5>
+            <div class="d-flex" id="addSkills">
+                {% for skill in skills: %}
+                    <div class="d-flex flex-column justify-content-between align-items-center m-2">
+                        <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                        <a class="skills mt-2 text-dark" href="/add_skill/{{skill.id}}">{{skill.skill}}</a>
+                    </div>
+                {% endfor %}
+            </div>
+            <h5 class="">Add New Frameworks</h5>
+            <div class="d-flex" id="addSkills">
+                {% for frame in frameworks: %}
+                    <div class="d-flex flex-column justify-content-between align-items-center m-2">
+                        <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                        <a class="skills mt-2 text-dark" href="/add_frame/{{frame.id}}">{{frame.framework}}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="d-flex flex-column text-bg-light p-3 col-12 mt-2 d-none" id="updateInfo">
+            <div class="m-auto">
+                <h4>Update your info:</h4>
+                <form enctype = "multipart/form-data" action = "/upload_pic" method = "post" class="mt-4">
+                    <input type="file" name="filename">
+                    <input type="submit" value="Upload" class="btn btn-primary">
+                </form>
+                <form action="/update_user" class="d-flex flex-column" method="POST">
+                    <label for="first_name mt-2">First name:</label>
+                    <input type="text" class="mt-2" name="first_name" placeholder="Edit your first name">
+                    <label for="last_name" class="mt-2">Last name:</label>
+                    <input type="text" class="mt-2" name="last_name" placeholder="Edit your last name">
+                    <label for="email" class="mt-2">Email:</label>
+                    <input type="text" class="mt-2" name="email" placeholder="Edit your email">
+                    <label for="password" class="mt-2">Insert your password to update your info:</label>
+                    <input type="password" class="mt-2" placeholder="Your current password" name="password">
+                    {% with messages = get_flashed_messages(with_categories, category_filter=['changePsw']) %}
+                        {% for msg in messages %}
+                            <small class="text-danger">{{ msg }}</small>
+                        {% endfor %}
+                    {% endwith %}
+                    <input type="submit" value="Update" class="btn btn-danger mt-2">
+                </form>
+            </div>
+        </div>
+        <div class="w-100 text-bg-light p-3 mt-2" id="appliedPos">
+            <h5>All positions you have applied:</h5>
+            <div id="applied">
+            {% for position in positions_content: %}
+                        <div class="card text-black mt-2 d-flex">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">{{position.name}}</h5>
+                                    {% for org in organizations %}
+                                        {% if org.id == position.organization_id %}
+                                        <div class="d-flex justify-content-start align-items-center">
+                                            <img src="/static/css/img/{{org.profile_pic}}" alt="" class="userProfile">
+                                            <h6 class="card-title">{{org.org_name}}</h6>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <p class="card-text">{{position.description}}</p>
+                                    <h6>Skills required:</h6>
+                                    <div class="d-flex">
+                                        {% if position.skill_1 != 'n/a' and position.skill_1 != 'undefined' %}
+                                            <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for skill in skills: %}
+                                                {% if position.skill_1 == skill.skill: %}
+                                                    <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.skill_1}}</a>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if position.skill_2 != 'n/a' and position.skill_2 != 'undefined' %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for skill in skills: %}
+                                                {% if position.skill_2 == skill.skill: %}
+                                                    <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.skill_2}}</a>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if position.skill_3 != 'n/a' and position.skill_3 != 'undefined' %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for skill in skills: %}
+                                                {% if position.skill_3 == skill.skill: %}
+                                                    <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                                <a href="#" class="m-2">{{position.skill_3}}</a>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if position.skill_4 != 'n/a' and position.skill_4 != 'undefined' %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for skill in skills: %}
+                                                {% if position.skill_4 == skill.skill: %}
+                                                    <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.skill_4}}</a>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if position.skill_5 != 'n/a' and position.skill_5 != 'undefined' %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for skill in skills: %}
+                                                {% if position.skill_5 == skill.skill: %}
+                                                    <img src="/static/css/img/{{skill.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                                <a href="#" class="m-2">{{position.skill_5}}</a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <h6>Frameworks required:</h6>
+                                    <div class="d-flex">
+                                    {% if position.frame_1 != None and position.frame_1 != 'undefined': %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for frame in frameworks: %}
+                                                {% if position.frame_1 == frame.framework: %}
+                                                    <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.frame_1}}</a>
+                                        </div>
+                                    {% endif %}
+                                    {% if position.frame_2 != None and position.frame_2 != 'undefined': %}
+                                    <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for frame in frameworks: %}
+                                                {% if position.frame_2 == frame.framework: %}
+                                                    <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.frame_2}}</a>
+                                        </div>
+                                    {% endif %}
+                                    {% if position.frame_3 != None and position.frame_3 != 'undefined': %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for frame in frameworks: %}
+                                                {% if position.frame_3 == frame.framework: %}
+                                                    <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.frame_3}}</a>
+                                        </div>
+                                    {% endif %}
+                                    {% if position.frame_4 != None and position.frame_4 != 'undefined': %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for frame in frameworks: %}
+                                                {% if position.frame_4 == frame.framework: %}
+                                                    <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.frame_4}}</a>
+                                        </div>
+                                    {% endif %}
+                                    {% if position.frame_5 != None and position.frame_5 != 'undefined': %}
+                                        <div class="d-flex flex-column justify-content-between align-items-center">
+                                            {% for frame in frameworks: %}
+                                                {% if position.frame_5 == frame.framework: %}
+                                                    <img src="/static/css/img/{{frame.icon}}" class="w50" alt=""> 
+                                                {% endif %}
+                                            {% endfor %}
+                                            <a href="#" class="m-2">{{position.frame_5}}</a>
+                                        </div>
+                                    {% endif %}
+                                    </div>
+                                </div>
+                                <div>
+                                    {% if position.status == 1 %}
+                                        <a href="#" class="btn btn-success">Your application was accepted</a>
+                                    {% endif %}
+                                    {% if position.status == 0 %}
+                                        <a href="#" class="btn btn-danger">Your application was rejected</a>
+                                    {% endif %}
+                                </div>
+                            </div> 
+                        </div>
+                    {% endfor %}
+                </div>
+        </div>
+    </div>
+    
+    <script src="{{url_for('static', filename='js/devProfile.js')}}"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(event) {
+        const showNavbar = (toggleId, navId, bodyId, headerId) =>{
+            const toggle = document.getElementById(toggleId),
+            nav = document.getElementById(navId),
+            bodypd = document.getElementById(bodyId),
+            headerpd = document.getElementById(headerId)
+
+            // Validate that all variables exist
+            if(toggle && nav && bodypd && headerpd){
+                toggle.addEventListener('click', ()=>{
+                    // show navbar
+                    nav.classList.toggle('show')
+                    // change icon
+                    toggle.classList.toggle('bx-x')
+                    // add padding to body
+                    bodypd.classList.toggle('body-pd')
+                    // add padding to header
+                    headerpd.classList.toggle('body-pd')
+                })
+            }
+        }
+
+        showNavbar('header-toggle','nav-bar','body-pd','header')
+
+        /*===== LINK ACTIVE =====*/
+        const linkColor = document.querySelectorAll('.nav_link')
+
+        function colorLink(){
+            if(linkColor){
+                linkColor.forEach(l=> l.classList.remove('active'))
+                this.classList.add('active')
+            }
+        }
+        linkColor.forEach(l=> l.addEventListener('click', colorLink))
+
+        // Your code to run since DOM is loaded and ready
+        });
+    </script>
+</body>
+</html>

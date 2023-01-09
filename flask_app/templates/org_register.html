@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DevsOnDeck</title>
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/styleOrg.css')}}">
+        <link href="{{url_for('static', filename='img')}}">
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="container">
+                <nav class="navbar d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
+                    <h2 class="d-flex col-lg-3 col-sm-4 col-md-3 align-items-center col-md-3 mb-2 mb-md-0">DevOnDeck  <i class="bi bi-braces-asterisk"></i></h2>
+                    <ul class="nav col-lg-6 col-sm-4 col-md-6 mb-2 justify-content-evenly d-flex mb-md-0">
+                        <li><a href="/" class="nav-link px-2 link-dark">Home</a></li>
+                        <li><a href="#" class="nav-link px-2 link-dark">Services</a></li>
+                        <li><a href="#" class="nav-link px-2 link-dark">About</a></li>
+                        <li><a href="/dev_register" class="nav-link px-2 link-dark">Dev Sign Up</a></li>
+                        <li><a href="#" class="nav-link px-2 link-success fw-bold">Org Sign Up</a></li>
+                    </ul>
+                    <div class="col-lg-3 col-sm-4 col-md-3 d-flex justify-content-center">
+                        <a href="/org_login" class="px-2 btn btn-outline-primary">Org Login</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="container">
+            <form class="col-sm-11 col-lg-6 col-md-9 m-auto mt-5 bg-dark p-5 text-white bg-opacity-75 shadow-lg rounded" id="orgRegForm" name="orgRegForm" method="POST">
+                <h1 class="text-center" id="success">Organization Sign Up <i class="bi bi-buildings"></i></h1>
+                <div class="form-group">
+                    <label for="org_name">Org Name</label>
+                    <input type="text" class="form-control" name="org_name" placeholder="Organization name" oninput="check_orgName()">
+                    <small class="text-danger" id="orgError"></small>
+                </div>
+                <div class="form-row d-flex justify-content-between">
+                    <div class="form-group col-md-6">
+                        <label for="first_name">First name</label>
+                        <input type="text" class="form-control" name="first_name" placeholder="First name" oninput="check_fname()">
+                        <small class="text-danger" id="fnameError"></small>
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="last_name">Last name</label>
+                        <input type="text" class="form-control" name="last_name" placeholder="Last name" oninput="check_lname()">
+                        <small class="text-danger" id="lnameError"></small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Contact Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="example@example.com" onfocusout="check_email()">
+                    <small class="text-danger" id="emailError"></small>
+                </div>
+                <div class="form-group">
+                    <label for="address">Org Address</label>
+                    <input type="text" class="form-control" name="address">
+                    <small class="text-danger" id="addressError"></small>
+                </div>
+                <div class="form-row d-flex justify-content-between">
+                    <div class="form-group col-md-6">
+                        <label for="inputCity">Org City</label>
+                        <input type="text" class="form-control" id="inputCity" name="city">
+                        <small class="text-danger" id="cityError"></small>
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="inputState">State</label>
+                        <select name="state" class="form-control">
+                            <option value="n/a">--Select--</option>
+                            <option value="Albania">Albania</option>
+                            <option value="Kosovo">Kosovo</option>
+                            <option value="Montenegro">Montenegro</option>
+                        </select>
+                        <small class="text-danger" id="stateError"></small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="********" oninput="check_psw()">
+                    <small class="text-danger" id="pswError"></small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" name="confirmPassword" placeholder="********" oninput="check_cpsw()">
+                    <small class="text-danger" id="cpswError"></small>
+                </div>
+                <button type="submit" class="btn btn-success col-sm-12 mt-2">Register</button>
+                <p class="text-center mt-2">
+                    <a href="/dev_register" class="link">Need to Sign Up as Developer?</a>
+                </p>
+            </form>
+        </div>
+        <script src="{{url_for('static', filename='js/orgRegister.js')}}" async></script>
+    </body>
+</html>
