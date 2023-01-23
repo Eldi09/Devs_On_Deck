@@ -52,7 +52,7 @@ class User():
     
     @classmethod
     def get_all_frameworks(cls):
-        query = "SELECT * FROM py se"
+        query = "SELECT * FROM frameworks"
         result = connectToMySQL(cls.db_name).query_db(query)
         frameworks = []
         for row in result:

@@ -66,7 +66,7 @@ class Organization():
     
     @classmethod
     def get_all_positions(cls):
-        query = "SELECT * FROM positions;"
+        query = "SELECT * FROM positions ORDER BY created_at DESC;"
         result = connectToMySQL(cls.db_name).query_db(query)
         positions = []
         for row in result:
